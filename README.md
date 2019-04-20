@@ -86,7 +86,7 @@ $ python run.py
 
 おうむ返しに加えて、前回発話内容の表示、ユーザー名の表示、そして発話に含まれる名詞の抽出をしてくれると思います。つまり、コンテキスト情報の管理や自然言語解析処理（形態素解析）がすぐに利用できるということをお分かりいただけたかと思います。
 
-<img src="https://github.com/uezo/minette-line-template/blob/master/images/screenshot01.png" alt="実行結果" height="333">
+<img src="https://github.com/uezo/linebot-project-template/blob/master/images/screenshot01.png" alt="実行結果" height="333">
 
 ※起動時にメッセージが出力される通り、**形態素解析機能の`MeCabService tagger`は本番利用には適していません**。ご自身の環境に[MeCab]をインストールして、`MeCabTagger`をご利用いただくか、以下の通り`run.py`を編集して形態素解析をオフにしてください。
 
@@ -184,7 +184,7 @@ from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
 
 これで準備は整いました。`Ctrl+C`でチャットボットを停止し、`run.py`を実行して再起動したらLINEアプリで会話を試してみてください。
 
-<img src="https://github.com/uezo/minette-line-template/blob/master/images/screenshot02.png" alt="実行結果" height="333">
+<img src="https://github.com/uezo/linebot-project-template/blob/master/images/screenshot02.png" alt="実行結果" height="333">
 
 
 # メッセージログの確認
@@ -193,7 +193,7 @@ from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
 
 そういった取り組みを支援するため、このテンプレートでは対話のログをブラウザベースでいつでもどこでも確認できるような仕組みを提供しています。チャットボットが起動した状態で、今回の例だと https://9b41ad02.ngrok.io/messagelog?key=password にアクセスすることで閲覧できます。**アクセスキーのパラメータ`key`は`minette.ini`で変更することができますので、必ず変更しましょう。**
 
-<img src="https://github.com/uezo/minette-line-template/blob/master/images/screenshot03.png" alt="メッセージログ" height="333">
+<img src="https://github.com/uezo/linebot-project-template/blob/master/images/screenshot03.png" alt="メッセージログ" height="333">
 
 ユーザーとチャットボットそれぞれの発話内容に加えて、インテント、話題とそのステータス、処理時間などが表示されます。エンティティが抽出された場合はその内容も記録されるため、発話内容をどのように解釈し、どのような処理を行ったかがわかるようになっています。
 
