@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>LIFFの例</title>
+</head>
+<body>
+    <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-primary">メッセージを送信</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+    <script>
+        $(function () {
+            // LIFF初期化
+            liff.init(function (data) {
+                // ボタン押下時のハンドラーを追加
+                $(".btn").on("click", function(e){
+                    // メッセージ送信
+                    liff.sendMessages([{
+                        type: "text",
+                        text: "LIFFからメッセージを送信"
+                    }]);
+                    // LIFFを閉じる
+                    liff.closeWindow();
+                });
+            }, function(error){
+                alert("LIFFアプリの初期化に失敗しました");
+            });
+        });
+    </script>
+
+</body>
+</html>
