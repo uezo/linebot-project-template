@@ -27,29 +27,29 @@ class WeatherDialogService(DialogService):
         return res[0]["translations"][0]["text"]
 
     # エンティティの抽出。リクエスト都度呼び出される
-    def extract_entities(self, request, session, connection):
+    def extract_entities(self, request, context, connection):
         areas = [w for w in request.words if w.part_detail2 == "地域"]
         return {"area": areas[0].surface if areas else ""}
 
-    # Process logic and build session data
-    def process_request(self, request, session, connection):
-        session.data["area"] = request.entities["area"]
-        if session.data["area"]:
+    # Process logic and build context data
+    def process_request(self, request, context, connection):
+        context.data["area"] = request.entities["area"]
+        if context.data["area"]:
             params = {
                 "APPID": self.config.get("weather_api_key"),
-                "q": self.translate(session.data["area"], "en")
+                "q": self.translate(context.data["area"], "en")
             }
             res = requests.get("http://api.openweathermap.org/data/2.5/forecast", params=params).json()
-            session.data["weather"] = self.translate(res["list"][0]["weather"][0]["main"], "ja")
+            context.data["weather"] = self.translate(res["list"][0]["weather"][0]["main"], "ja")
         elif "終" in request.text:
-            session.topic.status = "weather_end"
+            context.topic.status = "weather_end"
 
     # Compose response message
-    def compose_response(self, request, session, connection):
-        if session.data.get("weather", None):
-            return "{}の天気は{}です".format(session.data["area"], session.data["weather"])
-        elif session.topic.status == "weather_end":
+    def compose_response(self, request, context, connection):
+        if context.data.get("weather", None):
+            return "{}の天気は{}です".format(context.data["area"], context.data["weather"])
+        elif context.topic.status == "weather_end":
             return "天気を中止します"
         else:
-            session.topic.keep_on = True
+            context.topic.keep_on = True
             return "どこの天気を調べますか？"

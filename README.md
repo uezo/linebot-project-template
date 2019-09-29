@@ -105,18 +105,18 @@ bot = Minette.create(
 ``` SpecialEchoDialog.py
 # リクエスト情報やセッション情報を使ったおうむ返し
 class SpecialEchoDialogService(DialogService):
-    def compose_response(self, request, session, connection):
+    def compose_response(self, request, context, connection):
         # 前回の発話内容をセッションから取得
-        previous_text = session.data.get("previous_text", "")
+        previous_text = context.data.get("previous_text", "")
 
         # 今回の発話内容をセッションに格納
-        session.data["previous_text"] = request.text
+        context.data["previous_text"] = request.text
 
         # 発話内容から名詞を抽出
         noun = [w.surface for w in request.words if w.part == "名詞"]
 
         # この対話を継続することでセッション情報を維持
-        session.topic.keep_on = True
+        context.topic.keep_on = True
 
         # 応答メッセージの組み立て
         ret = "こんにちは、{}さん。今回は'{}'って言ったね。前回は'{}'って言ってたよ".format(
@@ -137,10 +137,10 @@ class SpecialEchoDialogService(DialogService):
 このテンプレートでは`dialogs`フォルダの中に各対話処理部品をまとめていますので、ここに`echo.py`を追加したら、以下の通りコードを追加してください。
 
 ``` echo.py
-from minette.dialog import DialogService
+from minette import DialogService
 
 class EchoDialogService(DialogService):
-    def compose_response(self, request, session, connection):
+    def compose_response(self, request, context, connection):
         return "You said: {}".format(request.text)
 ```
 
@@ -156,11 +156,11 @@ class EchoDialogService(DialogService):
 from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
 ```
 
-続いて、`configure`メソッドでインテント`EchoIntent`に`EchoDialogService`を紐づけるように設定。
+続いて、`register_intents`メソッドでインテント`EchoIntent`に`EchoDialogService`を紐づけるように設定。
 
 ``` dialog_router.py
     # ルーティングテーブルの設定
-    def configure(self):
+    def register_intents(self):
         self.intent_resolver = {
             "TranslationIntent": TranslationDialogService,
             "WeatherIntent": WeatherDialogService,
@@ -178,7 +178,7 @@ from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
             return "EchoIntent", {}, Priority.Highest
 ```
 
-なおこの`extract_intent`から[LUIS](https://www.luis.ai/home)などを呼び出し、その結果をそのままリターンすることでインテリジェントチャットボットを作ることができます。個人的にはルールベースとそれら自然言語処理サービスとを組み合わせることで、シナリオ進行に制御をきかせつつ柔軟な解釈も可能にするというのがオススメです。
+なおこの`extract_intent`メソッドから[LUIS](https://www.luis.ai/home)などを呼び出し、その結果をそのままリターンすることでインテリジェントチャットボットを作ることができます。個人的見解としては、ルールベースとそれら自然言語処理サービスとを組み合わせることで、シナリオ進行に制御をきかせつつ柔軟な解釈も可能にするというのがオススメです。
 
 ## 動作確認
 
@@ -196,6 +196,10 @@ from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
 <img src="https://github.com/uezo/linebot-project-template/blob/master/images/screenshot03.png" alt="メッセージログ" height="333">
 
 ユーザーとチャットボットそれぞれの発話内容に加えて、インテント、話題とそのステータス、処理時間などが表示されます。エンティティが抽出された場合はその内容も記録されるため、発話内容をどのように解釈し、どのような処理を行ったかがわかるようになっています。
+
+# タスクスケジューラーの利用
+
+チャットボットのリソースを活用しつつ定期的にタスクを実行するための機能があります。サンプルでは同梱の`scheduler.py`を実行すると5秒毎にメッセージが表示されます。タスクの実装は`tasks`パッケージ内の`SecondsTask`です。
 
 
 # さいごに
@@ -221,7 +225,6 @@ from dialogs.echo import EchoDialogService      # ⭐ ️追加 1
 - ユーザー管理　LINEのユーザーIDをキーに自動的にユーザー情報を保存し、スキル内で利用することができます
 - 形態素解析　発話内容は自動的にMeCabによる形態素解析が行われ、スキルの中で利用することができます
 - メッセージログ　ユーザーとBOTの話した内容やその際のトピック、コンテキスト情報、エンティティなどが記録されます
-- スケジューラ　定期的なタスクを実行する機能。Cron等を利用することなくすべてチャットボットのリソースで完結します
+- スケジューラ　定期的なタスクを実行する機能。Cron等を利用することなくすべてチャットボットのリソースで完結します。
 - 並列処理　長時間かかる処理を行っていても他のユーザーのリクエストに応答できます（LINEのみ）。並列処理してもコンテキストの整合性は保たれます
 - 統一的なアーキテクチャ　LINEもClovaも同じアーキテクチャで開発することができます
-

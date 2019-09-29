@@ -13,12 +13,12 @@ from minette.dialog import DialogService
 
 
 class TranslationDialogService(DialogService):
-    # Process logic and build session data
-    def process_request(self, request, session, connection):
-        if session.topic.is_new:
-            session.topic.status = "start_translation"
+    # Process logic and build context data
+    def process_request(self, request, context, connection):
+        if context.topic.is_new:
+            context.topic.status = "start_translation"
         elif request.text == "翻訳終わり":
-            session.topic.status = "end_translation"
+            context.topic.status = "end_translation"
         else:
             # 英語に翻訳（to=en）
             api_url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en"
@@ -31,16 +31,16 @@ class TranslationDialogService(DialogService):
             data = [{"text": request.text}]
             # APIの呼び出しと結果のセッションへの格納
             res = requests.post(api_url, headers=headers, json=data).json()
-            session.data["translated_text"] = res[0]["translations"][0]["text"]
-            session.topic.status = "process_translation"
+            context.data["translated_text"] = res[0]["translations"][0]["text"]
+            context.topic.status = "process_translation"
 
     # Compose response message
-    def compose_response(self, request, session, connection):
-        if session.topic.status == "start_translation":
-            session.topic.keep_on = True
+    def compose_response(self, request, context, connection):
+        if context.topic.status == "start_translation":
+            context.topic.keep_on = True
             return "英語に翻訳したい文章を入力してください"
-        elif session.topic.status == "end_translation":
+        elif context.topic.status == "end_translation":
             return "翻訳を終了しました"
-        elif session.topic.status == "process_translation":
-            session.topic.keep_on = True
-            return session.data["translated_text"]
+        elif context.topic.status == "process_translation":
+            context.topic.keep_on = True
+            return context.data["translated_text"]

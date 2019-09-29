@@ -1,4 +1,12 @@
-from flask import Blueprint, current_app, request, abort, render_template
+from flask import (
+    Blueprint,
+    current_app,
+    request,
+    abort,
+    render_template
+)
+
+from minette.utils import decode_json
 
 # メインから読み込むBlueprintの定義
 bp = Blueprint("messagelog", __name__)
@@ -8,10 +16,19 @@ bp = Blueprint("messagelog", __name__)
 @bp.route("/messagelog", methods=["GET"])
 def messagelog():
     # BOTインスタンスの取得
-    bot = current_app.line_adapter.minette
+    bot = current_app.line_adapter.bot
     # パスワードのチェック
     if request.args.get("key", "") != bot.config.get("messagelog_password"):
         abort(401)
-    # メッセージログの取得と表示
-    ml = bot.get_message_log(count=int(request.args.get("count", 20)))
+    # メッセージログの取得と表示（やっつけなのでプロダクションではクエリやテーブルをきちんとチューニングしてください）
+    with bot.connection_provider.get_connection() as connection:
+        cursor = connection.cursor()
+        cursor.execute("select * from messagelog order by id desc limit 50")
+        ml = []
+        for r in cursor.fetchall():
+            d = dict(zip([column[0] for column in cursor.description], r))
+            d["request_json"] = decode_json(d["request_json"])
+            d["context_json"] = decode_json(d["context_json"])
+            d["response_json"] = decode_json(d["response_json"])
+            ml.append(d)
     return render_template("messagelog.html", ml=ml)

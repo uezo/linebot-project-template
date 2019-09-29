@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# IDE
+.vscode
+
+# config for test
+test.ini
+
 # C extensions
 *.so
 

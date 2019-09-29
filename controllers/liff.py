@@ -9,11 +9,14 @@ host = 9b41ad02.ngrok.io
 host = yourdomain.com:21212
 """
 
-from flask import Flask, Blueprint, current_app, request, render_template
+from flask import (
+    Blueprint,
+    render_template
+)
 import requests
 import json
-from minette import Config
 
+from minette import Config
 
 # メインから読み込むBlueprintの定義
 bp = Blueprint("liff", __name__)
