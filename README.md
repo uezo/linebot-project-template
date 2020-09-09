@@ -52,9 +52,10 @@ APIを利用するためのアカウントを作成し、各種設定を行い�
 ## 依存ライブラリのインストール
 
 PyPIからLINE公式のPythonSDKとチャットボットフレームワークのMinetteをインストールします。今回のプロジェクトテンプレートは[Minette for Python](https://github.com/uezo/minette-python)というチャットボットフレームワークを活用するものです。
+依存ライブラリは`requirements.txt`に定義してありますので、以下の通り一括インストールしましょう。
 
 ```
-pip install line-bot-sdk minette requests flask
+pip install -r requirements.txt
 ```
 
 # プロジェクトテンプレートの入手と設定
@@ -78,8 +79,6 @@ $ python run.py
 2019-04-17 21:48:01,444 - minette.core - INFO - Create 16 worker thread(s)
  * Serving Flask app "run" (lazy loading)
  * Environment: production
-   WARNING: Do not use the development server in a production environment.
-   Use a production WSGI server instead.
  * Debug mode: off
  * Running on http://0.0.0.0:21212/ (Press CTRL+C to quit)
 ```
@@ -87,18 +86,6 @@ $ python run.py
 おうむ返しに加えて、前回発話内容の表示、ユーザー名の表示、そして発話に含まれる名詞の抽出をしてくれると思います。つまり、コンテキスト情報の管理や自然言語解析処理（形態素解析）がすぐに利用できるということをお分かりいただけたかと思います。
 
 <img src="https://github.com/uezo/linebot-project-template/blob/master/images/screenshot01.png" alt="実行結果" height="333">
-
-※起動時にメッセージが出力される通り、**形態素解析機能の`MeCabService tagger`は本番利用には適していません**。ご自身の環境に[MeCab]をインストールして、`MeCabTagger`をご利用いただくか、以下の通り`run.py`を編集して形態素解析をオフにしてください。
-
-``` run.py
-# BOTのインスタンス化
-bot = Minette.create(
-    config_file="./minette.ini",
-    dialog_router=MyDialogRouter,
-    default_dialog_service=SpecialEchoDialogService,
-    # tagger=MeCabServiceTagger,    # ⭐️この行をコメントアウト
-)
-```
 
 なお[Minette](https://github.com/uezo/minette-python)では1つの話題ごとに1つの処理部品（クラス）を用意するような構造になっています。今回のおうむ返し＋αのコードの中身は以下の通りです。
 
