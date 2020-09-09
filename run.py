@@ -1,11 +1,7 @@
 from flask import Flask
 
-from minette import (
-    Minette,
-    DialogRouter,
-    MeCabServiceTagger
-)
 from minette.adapter.lineadapter import LineAdapter
+from minette.tagger.janometagger import JanomeTagger
 
 from dialog_router import MyDialogRouter
 from controllers.endpoint import bp as endpoint_bp
@@ -16,7 +12,7 @@ from controllers.liff import bp as liff_bp
 adapter = LineAdapter(
     config_file="./minette.ini",
     dialog_router=MyDialogRouter,
-    tagger=MeCabServiceTagger,
+    tagger=JanomeTagger,
 )
 
 # Webアプリケーションのセットアップ

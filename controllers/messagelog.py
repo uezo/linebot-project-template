@@ -6,7 +6,7 @@ from flask import (
     render_template
 )
 
-from minette.utils import decode_json
+from minette.serializer import loads
 
 # メインから読み込むBlueprintの定義
 bp = Blueprint("messagelog", __name__)
@@ -27,8 +27,8 @@ def messagelog():
         ml = []
         for r in cursor.fetchall():
             d = dict(zip([column[0] for column in cursor.description], r))
-            d["request_json"] = decode_json(d["request_json"])
-            d["context_json"] = decode_json(d["context_json"])
-            d["response_json"] = decode_json(d["response_json"])
+            d["request_json"] = loads(d["request_json"])
+            d["context_json"] = loads(d["context_json"])
+            d["response_json"] = loads(d["response_json"])
             ml.append(d)
     return render_template("messagelog.html", ml=ml)

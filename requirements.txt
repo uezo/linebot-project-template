@@ -1,0 +1,4 @@
+Flask==1.1.2
+Janome==0.4.0
+line-bot-sdk==1.17.0
+minette==0.4.3

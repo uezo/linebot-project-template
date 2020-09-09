@@ -11,11 +11,14 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         $(function () {
-            // LIFF初期化
-            liff.init(function (data) {
+            // LIFFの初期化
+            liff.init({
+                liffId: "{{liff_id}}"
+            })
+            .then(() => {
                 // ボタン押下時のハンドラーを追加
                 $(".btn").on("click", function(e){
                     // メッセージ送信
@@ -26,8 +29,10 @@
                     // LIFFを閉じる
                     liff.closeWindow();
                 });
-            }, function(error){
+            })
+            .catch((err) => {
                 alert("LIFFアプリの初期化に失敗しました");
+                alert(err);
             });
         });
     </script>
